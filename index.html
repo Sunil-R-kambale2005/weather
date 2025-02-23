@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" spellcheck="false">
+            <button><img src="search_4410940.png" alt="Search"></button>
+        </div>
+        <div class="weather">
+            <img src="cloud_14397355.png" class="weather-icon" alt="Weather Icon">
+            <h1 class="temperature">25°C</h1>
+            <h2 class="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="humidity_1779713.png" alt="Humidity">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>  
+                </div>
+                <div class="col">
+                    <img src="wind_1230811.png" alt="Wind">
+                    <div>
+                        <p class="wind">15 km/hr</p>
+                        <p>Wind</p>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apikey = "2b0e2810a49342a58a353027252302";
+        
+        const searchbox = document.querySelector('.search input');
+        const searchbtn = document.querySelector('.search button');
+
+        async function checkweather(city) {
+            const apiurl = `https://api.weatherapi.com/v1/current.json?key=${apikey}&q=${city}&aqi=no`;
+            const response = await fetch(apiurl);
+            const data = await response.json();
+
+            if (data.error) {
+                alert("City not found. Please enter a valid city.");
+                return;
+            }
+
+            // Update the weather information on the page
+            document.querySelector('.city').innerHTML = data.location.name + ", " + data.location.country;
+            document.querySelector('.temperature').innerHTML = Math.round(data.current.temp_c) + "°C";
+            document.querySelector('.humidity').innerHTML = data.current.humidity + "%";
+            document.querySelector('.wind').innerHTML = data.current.wind_kph + " km/hr";
+
+            // Optionally update the weather icon
+            const weatherIcon = data.current.condition.icon;
+            document.querySelector('.weather-icon').src = `http:${weatherIcon}`;
+        }
+
+        // Event listener to trigger the weather check when the search button is clicked
+        searchbtn.addEventListener('click', () => {
+            const city = searchbox.value;
+            if (city) {
+                checkweather(city);
+            } else {
+                alert("Please enter a city name.");
+            }
+        });
+
+        // Optionally allow users to press Enter to search
+        searchbox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const city = searchbox.value;
+                if (city) {
+                    checkweather(city);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
